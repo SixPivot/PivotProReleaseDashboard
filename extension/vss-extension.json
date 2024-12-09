@@ -3,7 +3,7 @@
     "id": "sixpivot-release-dashboard",
     "publisher": "sixpivot",
     "version": "1.0.128",
-    "name": "Release Dashboard",
+    "name": "PivotPro Release Dashboard",
     "description": "A dashboard to view a summary of all deployments",
     "demands": ["api-version/3.0"],
     "categories": ["Azure Pipelines"],
@@ -45,16 +45,16 @@
     "scopes": ["vso.build", "vso.release", "vso.environment_manage"],
     "repository": {
         "type": "git",
-        "uri": "https://github.com/SixPivot/AzureDevopsDeploymentDashboard"
+        "uri": "https://github.com/SixPivot/PivotProReleaseDashboard"
     },
     "contributions": [
         {
             "id": "deployment-dashboard",
             "type": "ms.vss-web.hub",
-            "description": "Deployment dashboard page",
+            "description": "PivotPro Release Dashboard page",
             "targets": ["ms.vss-build-web.build-release-hub-group"],
             "properties": {
-                "name": "Deployment Dashboard",
+                "name": "PivotPro Release Dashboard",
                 "uri": "dist/dashboard/dashboard.html",
                 "order": 1,
                 "icon": {
@@ -66,10 +66,10 @@
         {
             "id": "deployment-dashboard-settings",
             "type": "ms.vss-web.hub",
-            "description": "Deployment dashboard settings",
+            "description": "PivotPro Release Dashboard settings",
             "targets": ["ms.vss-web.project-admin-hub-group"],
             "properties": {
-                "name": "Deployment dashboard settings",
+                "name": "PivotPro Release Dashboard settings",
                 "uri": "dist/settings/settings.html",
                 "order": 1,
                 "icon": {
