@@ -40,7 +40,7 @@ export const SettingsContent = (props: ISettingsContentProps) => {
         {
             iconProps: { iconName: 'ViewDashboard' },
             id: 'deployment-dashboard',
-            tooltipProps: { text: 'Navigate to deployment dashboard' },
+            tooltipProps: { text: 'Navigate to PivotPro Release Dashboard' },
             isPrimary: true,
             important: true,
             href: state.projectInfo?.deploymentDashboardUri,
@@ -88,10 +88,10 @@ export const SettingsContent = (props: ISettingsContentProps) => {
                 <HeaderTitleArea>
                     <HeaderTitleRow>
                         <HeaderTitle ariaLevel={3} className="text-ellipsis" titleSize={TitleSize.Large}>
-                            Deployment Dashboard Settings
+                            PivotPro Release Dashboard Settings
                         </HeaderTitle>
                     </HeaderTitleRow>
-                    <HeaderDescription>Customise deployment dashboard</HeaderDescription>
+                    <HeaderDescription>Customise PivotPro Release Dashboard</HeaderDescription>
                 </HeaderTitleArea>
                 <HeaderCommandBar items={pageHeaderCommandBarItems} />
             </CustomHeader>

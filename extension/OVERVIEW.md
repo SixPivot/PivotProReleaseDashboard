@@ -1,4 +1,4 @@
-# Deployment Dashboard for Pipelines
+# PivotPro Release Dashboard for Pipelines
 
 This dashboard lets you easily see an overview of all your recent pipeline deployments including:
 

@@ -11,7 +11,7 @@ test('Render and check layout', async () => {
 
     await screen.findByRole('heading')
 
-    expect(screen.getByRole('heading')).toHaveTextContent('Deployment Dashboard')
+    expect(screen.getByRole('heading')).toHaveTextContent('PivotPro Release Dashboard')
 
     await screen.findByRole('grid')
     expect(screen.getByRole('grid')).not.toBeUndefined()

@@ -1,4 +1,4 @@
-# Deployment Dashboard
+# PivotPro Release Dashboard
 
 Local development and debugging of the extension (except for the most simple changes) will generally require that you have access to an Azure DevOps organisation that you can publish your own 'dev' copy of the extension, which alters the baseUri to point to your local machine.
 
@@ -35,9 +35,9 @@ Local development and debugging of the extension (except for the most simple cha
 
 1. `npm run start:dev`
 1. Go to <localhost:3000> in your browser. You should get an untrusted certificate error page. Select **Advanced** and then select **Accept the Risk and Continue**.
-1. In Azure DevOps, open a project and go to the **Azure Pipelines** section and click on the **Deployment Dashboard** item that links to a page ending in `sixpivot-release-dashboard-dev.deployment-dashboard` (Note the `-dev` in the name!)
+1. In Azure DevOps, open a project and go to the **Azure Pipelines** section and click on the **PivotPro Release Dashboard** item that links to a page ending in `sixpivot-release-dashboard-dev.deployment-dashboard` (Note the `-dev` in the name!)
 
-    ![Dev deployment dashboard](../assets/azure-pipelines-menu-dev-extension.png)
+    ![Dev PivotPro Release Dashboard](../assets/azure-pipelines-menu-dev-extension.png)
 
 1. You can now make local changes to the extension code. As this extension is pointing back to <https://localhost:3000> you should be ready to make changes to your code and see it hot-reload.
 
