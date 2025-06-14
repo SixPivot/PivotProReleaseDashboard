@@ -1,0 +1,55 @@
+# Build and publish public version of extension to Marketplace
+
+trigger: none
+
+steps:
+  - checkout: self
+    fetchDepth: 0
+
+  - task: NodeTool@0
+    displayName: "NodeTool"
+    inputs:
+      versionSpec: "16.x"
+
+  - task: Npm@1
+    displayName: "Npm: Install"
+    inputs:
+      command: ci
+      workingDir: extension
+
+  - script: |
+      npx nbgv cloud --all-vars
+    displayName: "Script: Set version"
+    workingDirectory: extension
+
+  - script: printenv
+    displayName: "Script: printenv"
+
+  - script: npm run test
+    displayName: "Script: Test"
+    workingDirectory: extension
+
+  - pwsh: |
+      $config = (Get-Content vss-extension.json) | ConvertFrom-Json
+      $config.version = $env:NBGV_NPMPACKAGEVERSION
+      $config | ConvertTo-Json -depth 3 | Set-Content vss-extension.json
+    displayName: "PowerShell: Patch version"
+    workingDirectory: extension
+
+  - script: npm run package
+    displayName: "Script: Package"
+    workingDirectory: extension
+
+  # - pwsh: |
+  #     $inputFile = "./dist/dashboard/dashboard.js"
+  #     $token = "#applicationInsightsConnectionString#"
+  #     $tokenValue = "$(APPLICATION_INSIGHTS_CONNECTIONSTRING)"
+  #     (Get-Content $inputFile) | ForEach-Object { $_ -replace $token, $tokenValue } | Set-Content $inputFile
+  #   workingDirectory: extension
+  #   displayName: "Replace tokens"
+
+  # - script: |
+  #     npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/release.json --output-path out --no-wait-validation
+  #   displayName: "Script: Publish to Marketplace"
+  #   condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+  #   workingDirectory: extension

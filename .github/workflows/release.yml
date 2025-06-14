@@ -1,0 +1,24 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Dump event context
+        env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+        run: echo "$EVENT_CONTEXT"
+
+      #- name: Run Azure DevOps Pipeline
+      #  uses: tjcorr/pipelines@v1.4
