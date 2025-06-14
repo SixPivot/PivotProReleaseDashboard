@@ -20,5 +20,13 @@ jobs:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: echo "$EVENT_CONTEXT"
 
-      #- name: Run Azure DevOps Pipeline
-      #  uses: tjcorr/pipelines@v1.4
+      # Trigger Azure DevOps pipeline to publish the extension
+      - uses: tjcorr/pipelines@v1.4
+        with:
+          azure-devops-project-url: "${{ secrets.AZURE_DEVOPS_PROJECT_URL }}"
+          azure-pipeline-name: "Publish (GitHub)"
+          azure-devops-token: "${{ secrets.AZURE_DEVOPS_TOKEN }}"
+          #azure-pipeline-variables: '{"environment": "production"}'
+          # azure-template-parameters: '{"param1": "value1", "param2": "value2"}'
+          source-branch: "${{ github.ref }}"
+          source-version: "${{ github.sha }}"
