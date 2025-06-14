@@ -1,12 +1,14 @@
 # Build and publish public version of extension to Marketplace
 
+# Version the build using the tag name. eg. 'v1.1.102'
+name: $(SourceBranchName)
+
 trigger: none
 
 pr: none
 
 steps:
   - checkout: self
-    fetchDepth: 0
     fetchTags: true
 
   - script: |
@@ -24,11 +26,6 @@ steps:
       command: ci
       workingDir: extension
 
-  - script: |
-      npx nbgv cloud --all-vars
-    displayName: "Script: Set version"
-    workingDirectory: extension
-
   - script: printenv
     displayName: "Script: printenv"
 
@@ -38,8 +35,11 @@ steps:
 
   - pwsh: |
       $config = (Get-Content vss-extension.json) | ConvertFrom-Json
-      $config.version = $env:NBGV_NPMPACKAGEVERSION
+      $version = "$(Build.SourceBranchName)".Replace("v", "")
+      $config.version = $version
       $config | ConvertTo-Json -depth 3 | Set-Content vss-extension.json
+
+      (Get-Content vss-extension.json)
     displayName: "PowerShell: Patch version"
     workingDirectory: extension
 
@@ -55,8 +55,8 @@ steps:
   #   workingDirectory: extension
   #   displayName: "Replace tokens"
 
-  # - script: |
-  #     npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/release.json --output-path out --no-wait-validation
-  #   displayName: "Script: Publish to Marketplace"
-  #   condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
-  #   workingDirectory: extension
+  - script: |
+      npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/release.json --output-path out --no-wait-validation
+    displayName: "Script: Publish to Marketplace"
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    workingDirectory: extension
