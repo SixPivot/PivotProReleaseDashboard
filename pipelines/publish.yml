@@ -53,13 +53,7 @@ steps:
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
       - script: |
-          npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/dev.json --output-path out-dev
+          npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/dev.json --output-path out-dev --no-wait-validation
         displayName: "Script: Publish to Marketplace (Dev)"
         condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
         workingDirectory: extension
-
-      # - script: |
-      #     npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/release.json --output-path out
-      #   displayName: "Script: Publish to Marketplace"
-      #   condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
-      #   workingDirectory: extension

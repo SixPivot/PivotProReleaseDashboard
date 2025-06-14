@@ -23,8 +23,8 @@ jobs:
       - name: gitversion
         id: gitversion
         run: |
-          echo "set-output name=NBGV_SemVer2::$NBGV_SemVer2"
-          echo "::set-output name=NBGV_SemVer2::$NBGV_SemVer2"
+          echo "NBGV_SemVer2=$NBGV_SemVer2" >> $GITHUB_OUTPUT
+          
 
   update_release_draft:
     name: Update release draft
