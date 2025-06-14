@@ -6,6 +6,10 @@ steps:
   - checkout: self
     fetchDepth: 0
 
+  - script: |
+      env -0 | sort -z | tr '\0' '\n'
+    displayName: "Script: Dump environment variables"
+
   - task: NodeTool@0
     displayName: "NodeTool"
     inputs:
