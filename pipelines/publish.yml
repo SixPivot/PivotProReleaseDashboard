@@ -28,7 +28,6 @@ steps:
   - script: printenv
     displayName: "Script: printenv"
 
-    
   - script: npm run test
     displayName: "Script: Test"
     workingDirectory: extension
@@ -50,17 +49,17 @@ steps:
       $tokenValue = "$(APPLICATION_INSIGHTS_CONNECTIONSTRING)"
       (Get-Content $inputFile) | ForEach-Object { $_ -replace $token, $tokenValue } | Set-Content $inputFile
     workingDirectory: extension
-    displayName: 'Replace tokens'
-      
+    displayName: "Replace tokens"
 
-  - script: |
-      npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/dev.json --output-path out-dev
-    displayName: 'Script: Publish to Marketplace (Dev)'
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
-    workingDirectory: extension
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+      - script: |
+          npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/dev.json --output-path out-dev
+        displayName: "Script: Publish to Marketplace (Dev)"
+        condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+        workingDirectory: extension
 
-  - script: |
-      npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/release.json --output-path out
-    displayName: 'Script: Publish to Marketplace'
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
-    workingDirectory: extension
+      # - script: |
+      #     npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/release.json --output-path out
+      #   displayName: "Script: Publish to Marketplace"
+      #   condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      #   workingDirectory: extension
