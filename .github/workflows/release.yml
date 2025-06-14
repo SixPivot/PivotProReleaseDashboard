@@ -24,9 +24,9 @@ jobs:
       - uses: tjcorr/pipelines@v1.4
         with:
           azure-devops-project-url: "${{ secrets.AZURE_DEVOPS_PROJECT_URL }}"
-          azure-pipeline-name: "Publish (GitHub)"
+          azure-pipeline-id: 94
           azure-devops-token: "${{ secrets.AZURE_DEVOPS_TOKEN }}"
           #azure-pipeline-variables: '{"environment": "production"}'
           # azure-template-parameters: '{"param1": "value1", "param2": "value2"}'
-          source-branch: "${{ github.ref }}"
+          # source-branch: "${{ github.ref }}"
           source-version: "${{ github.sha }}"
