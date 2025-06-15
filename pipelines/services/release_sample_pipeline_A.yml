@@ -1,4 +1,3 @@
-
 trigger: none
 
 pool:
@@ -16,7 +15,7 @@ stages:
               steps:
                 - script: echo "Deploy to Dev"
                 - script: sleep 10
-      
+
   - stage: test
     jobs:
       - deployment: test
@@ -25,6 +24,13 @@ stages:
           runOnce:
             deploy:
               steps:
+                - checkout: self
+                  fetchDepth: 0
+
+                - script: |
+                    nbgv cloud --all-vars
+                  displayName: "Run NBGV Cloud"
+
                 - script: echo "Deploy to Test"
                 - script: sleep 10
 
@@ -37,4 +43,3 @@ stages:
             deploy:
               steps:
                 - script: echo "Deploy to Prod"
-
