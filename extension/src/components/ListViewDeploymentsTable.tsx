@@ -1,15 +1,20 @@
 import { SimpleTableCell, Table } from 'azure-devops-ui/Table'
 import { Link } from 'azure-devops-ui/Link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Status, StatusSize } from 'azure-devops-ui/Status'
 import { AgoFormat } from 'azure-devops-ui/Utilities/Date'
 import { getStatusIndicatorData } from '../utilities'
 import { IDashboardEnvironmentColumn, IEnvironmentInstance, IPipelineInstance } from '../types'
 import { ArrayItemProvider } from 'azure-devops-ui/Utilities/Provider'
 import { SafeAgo } from './SafeAgo'
+import { getBuildName } from '../api/BuildClient'
 
-export const ListViewDeploymentsTable = (props: { environments: IEnvironmentInstance[]; pipelines: IPipelineInstance[] }): JSX.Element => {
-    const { environments, pipelines } = props
+export const ListViewDeploymentsTable = (props: {
+    environments: IEnvironmentInstance[]
+    pipelines: IPipelineInstance[]
+    projectName?: string
+}): JSX.Element => {
+    const { environments, pipelines, projectName } = props
 
     function getListViewColumns(environments: IEnvironmentInstance[]): Array<IDashboardEnvironmentColumn> {
         const columns: IDashboardEnvironmentColumn[] = []
@@ -34,6 +39,31 @@ export const ListViewDeploymentsTable = (props: { environments: IEnvironmentInst
         return columns.concat(dynamicColumns)
     }
 
+    // Helper component for deferred build name lookup
+    const BuildNameCell = ({ value, ownerId, uri }: { value: string; ownerId?: number; uri: string }) => {
+        const [buildName, setBuildName] = useState<string | undefined>(!ownerId ? value : undefined)
+        useEffect(() => {
+            let cancelled = false
+            async function fetchName() {
+                if (ownerId && projectName) {
+                    const name = await getBuildName(projectName, ownerId)
+                    if (!cancelled) setBuildName(name || value)
+                } else {
+                    setBuildName(value)
+                }
+            }
+            fetchName()
+            return () => {
+                cancelled = true
+            }
+        }, [ownerId, projectName, value])
+        return (
+            <Link className="bolt-table-inline-link bolt-table-link no-underline-link" target="_top" href={uri}>
+                {buildName || value}
+            </Link>
+        )
+    }
+
     const renderCell = (_index: number, columnIndex: number, tableColumn: IDashboardEnvironmentColumn, tableItem: IPipelineInstance) => {
         return (
             <SimpleTableCell
@@ -54,13 +84,11 @@ export const ListViewDeploymentsTable = (props: { environments: IEnvironmentInst
                             size={StatusSize.m}
                         />
                         <div className="flex-column wrap-text">
-                            <Link
-                                className="bolt-table-inline-link bolt-table-link no-underline-link"
-                                target="_top"
-                                href={tableItem.environments[tableColumn.id].uri}
-                            >
-                                {tableItem.environments[tableColumn.id].value}
-                            </Link>
+                            <BuildNameCell
+                                value={tableItem.environments[tableColumn.id].value}
+                                ownerId={tableItem.environments[tableColumn.id].ownerId}
+                                uri={tableItem.environments[tableColumn.id].uri}
+                            />
                             <div className="finish-date">
                                 {tableItem.environments[tableColumn.id].finishTime && (
                                     <SafeAgo date={tableItem.environments[tableColumn.id].finishTime} format={AgoFormat.Extended} />
