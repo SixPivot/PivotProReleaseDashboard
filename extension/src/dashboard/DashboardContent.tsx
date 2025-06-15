@@ -102,7 +102,7 @@ export const DashboardContent = (props: DashboardContentProps) => {
                             </div>
                         </div>
                     ) : viewType === ViewType.List ? (
-                        <ListViewDeploymentsTable environments={environments} pipelines={pipelines} />
+                        <ListViewDeploymentsTable environments={environments} pipelines={pipelines} projectName={projectInfo?.name} />
                     ) : (
                         <TreeViewDeploymentsTable environments={environments} pipelines={pipelines} />
                     )}

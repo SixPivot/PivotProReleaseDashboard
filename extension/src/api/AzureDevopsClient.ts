@@ -9,7 +9,6 @@ import {
     IEnvironmentInstance,
 } from '../types'
 import { sortByConvention } from '../utilities'
-import { getBuildName } from './BuildClient'
 
 export async function getDashboardEnvironmentPipeline(projectName: string): Promise<IDashboardEnvironmentPipeline> {
     const taskAgentClient = getClient(TaskAgentRestClient)
@@ -33,18 +32,8 @@ export async function getDashboardEnvironmentPipeline(projectName: string): Prom
             // Pipelines that are removed may still have deployments, but we don't want to show them.
             if (pipeline) {
                 if (!environmentPipeline.pipeline[pipeline.name]) {
-                    // Fetch the current build name
-                    let currentBuildName = deployment.owner?.id
-                        ? await getBuildName(projectName, deployment.owner.id)
-                        : undefined;
                     environmentPipeline.pipeline[pipeline.name] = {
-                        deployment: {
-                            ...deployment,
-                            owner: {
-                                ...deployment.owner,
-                                name: currentBuildName || deployment.owner?.name,
-                            },
-                        },
+                        deployment: deployment, // owner.id will be used in UI to fetch build name
                         pipeline: pipeline,
                     }
                 }
@@ -80,7 +69,8 @@ function generatePipelineInstancesArray(environments: IEnvironmentPipelines[]): 
             if (environment.name === undefined) continue
 
             pipelineInfo.environments[environment.name] = {
-                value: environment.pipeline[key].deployment.owner.name,
+                value: environment.pipeline[key].deployment.owner.name, // UI will resolve build name
+                ownerId: environment.pipeline[key].deployment.owner?.id, // pass owner id for deferred lookup
                 finishTime: environment.pipeline[key].deployment.finishTime,
                 result: environment.pipeline[key].deployment.result,
                 folder: environment.pipeline[key].pipeline?.folder,
