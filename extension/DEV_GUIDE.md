@@ -2,6 +2,10 @@
 
 Local development and debugging of the extension (except for the most simple changes) will generally require that you have access to an Azure DevOps organisation that you can publish your own 'dev' copy of the extension, which alters the baseUri to point to your local machine.
 
+## Prerequisites
+
+While Azure DevOps extensions support building on Node 18.x, this extension also makes use of the [azure-devops-ui](https://developer.microsoft.com/en-au/azure-devops) NPM package which is built upon React 16. (Version 16.8.1 to be precise).
+
 ## Get started
 
 1. Clone the repo
