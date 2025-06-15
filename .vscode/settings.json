@@ -1,6 +1,6 @@
 {
     "files.associations": {
-        "**/pipelines/*.yml": "azure-pipelines"
+        "**/pipelines/**/*.yml": "azure-pipelines",
     },
     "workbench.preferredLightColorTheme": "Solarized Light"
 }
