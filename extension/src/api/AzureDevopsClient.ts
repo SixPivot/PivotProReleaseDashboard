@@ -9,6 +9,7 @@ import {
     IEnvironmentInstance,
 } from '../types'
 import { sortByConvention } from '../utilities'
+import { getBuildName } from './BuildClient'
 
 export async function getDashboardEnvironmentPipeline(projectName: string): Promise<IDashboardEnvironmentPipeline> {
     const taskAgentClient = getClient(TaskAgentRestClient)
@@ -32,8 +33,18 @@ export async function getDashboardEnvironmentPipeline(projectName: string): Prom
             // Pipelines that are removed may still have deployments, but we don't want to show them.
             if (pipeline) {
                 if (!environmentPipeline.pipeline[pipeline.name]) {
+                    // Fetch the current build name
+                    let currentBuildName = deployment.owner?.id
+                        ? await getBuildName(projectName, deployment.owner.id)
+                        : undefined;
                     environmentPipeline.pipeline[pipeline.name] = {
-                        deployment: deployment,
+                        deployment: {
+                            ...deployment,
+                            owner: {
+                                ...deployment.owner,
+                                name: currentBuildName || deployment.owner?.name,
+                            },
+                        },
                         pipeline: pipeline,
                     }
                 }
