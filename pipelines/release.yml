@@ -7,6 +7,9 @@ trigger: none
 
 pr: none
 
+variables:
+  - group: Tokens
+
 steps:
   - checkout: self
     fetchTags: true
@@ -56,6 +59,8 @@ steps:
   #   displayName: "Replace tokens"
 
   - script: |
-      npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-js vss-extension.js --output-path out --no-wait-validation --env mode=production
+      npx tfx extension publish --token $MARKETPLACE_TOKEN --manifest-js vss-extension.js --output-path out --no-wait-validation --env mode=production
     displayName: "Script: Publish to Marketplace"
     workingDirectory: extension
+    env:
+      MARKETPLACE_TOKEN: $(MARKETPLACE_TOKEN)

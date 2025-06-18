@@ -6,7 +6,9 @@ trigger:
       - main
 
 variables:
-  npm_config_cache: $(Pipeline.Workspace)/.npm
+  - group: Tokens
+  - name: npm_config_cache
+    value: $(Pipeline.Workspace)/.npm
 
 steps:
   - checkout: self
@@ -64,14 +66,18 @@ steps:
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
       - script: |
-          npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-js vss-extension.js --output-path out-dev --no-wait-validation --env mode=development
+          npx tfx extension publish --token $MARKETPLACE_TOKEN --manifest-js vss-extension.js --output-path out-dev --no-wait-validation --env mode=development
         displayName: "Script: Publish to Marketplace (Dev)"
         workingDirectory: extension
+        env:
+          MARKETPLACE_TOKEN: $(MARKETPLACE_TOKEN)
 
       - script: |
-          npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-js vss-extension.js --output-path out-test --no-wait-validation --env mode=test
+          npx tfx extension publish --token $MARKETPLACE_TOKEN --manifest-js vss-extension.js --output-path out-test --no-wait-validation --env mode=test
         displayName: "Script: Publish to Marketplace (Test)"
         workingDirectory: extension
+        env:
+          MARKETPLACE_TOKEN: $(MARKETPLACE_TOKEN)
   - ${{ else }}:
       - script: |
           npx tfx extension create --manifest-js vss-extension.js --output-path out-dev --no-wait-validation --env mode=development
