@@ -56,7 +56,7 @@ steps:
   #   displayName: "Replace tokens"
 
   - script: |
-      npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/release.json --output-path out --no-wait-validation --env mode=production
+      npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-js vss-extension.js --output-path out --no-wait-validation --env mode=production
     displayName: "Script: Publish to Marketplace"
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     workingDirectory: extension

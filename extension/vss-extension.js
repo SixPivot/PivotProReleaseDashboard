@@ -30,7 +30,5 @@ module.exports = (env) => {
         testManifest.baseUri = 'https://localhost:3000'
     }
 
-    testManifest.name += namePostfix
-
     return testManifest
 }
