@@ -5,6 +5,9 @@ trigger:
     include:
       - main
 
+variables:
+  npm_config_cache: $(Pipeline.Workspace)/.npm
+
 steps:
   - checkout: self
     fetchDepth: 0
@@ -13,6 +16,14 @@ steps:
     displayName: "NodeTool"
     inputs:
       versionSpec: "16.x"
+
+  - task: Cache@2
+    displayName: Cache NPM packages
+    inputs:
+      key: 'npm | "$(Agent.OS)" | extension/package-lock.json'
+      restoreKeys: |
+        npm | "$(Agent.OS)"
+      path: $(npm_config_cache)
 
   - task: Npm@1
     displayName: "Npm: Install"
@@ -53,11 +64,21 @@ steps:
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
       - script: |
-          npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/dev.json --output-path out-dev --no-wait-validation
+          npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-js vss-extension.js --output-path out-dev --no-wait-validation --env mode=development
         displayName: "Script: Publish to Marketplace (Dev)"
         workingDirectory: extension
 
       - script: |
-          npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-globs vss-extension.json --overrides-file configs/test.json --output-path out-test --no-wait-validation
+          npx tfx extension publish --token $(MARKETPLACE_TOKEN) --manifest-js vss-extension.js --output-path out-test --no-wait-validation --env mode=test
         displayName: "Script: Publish to Marketplace (Test)"
+        workingDirectory: extension
+  - ${{ else }}:
+      - script: |
+          npx tfx extension create --manifest-js vss-extension.js --output-path out-dev --no-wait-validation --env mode=development
+        displayName: "Script: Create vsix (Dev)"
+        workingDirectory: extension
+
+      - script: |
+          npx tfx extension create --manifest-js vss-extension.js --output-path out-test --no-wait-validation --env mode=test
+        displayName: "Script: Create vsix (Test)"
         workingDirectory: extension
