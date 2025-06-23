@@ -1,12 +1,8 @@
-import { SimpleTableCell, Table } from 'azure-devops-ui/Table'
-import { Link } from 'azure-devops-ui/Link'
+import { Table } from 'azure-devops-ui/Table'
 import React, { useEffect, useState } from 'react'
-import { Status, StatusSize } from 'azure-devops-ui/Status'
-import { AgoFormat } from 'azure-devops-ui/Utilities/Date'
-import { getStatusIndicatorData } from '../utilities'
 import { IDashboardEnvironmentColumn, IEnvironmentInstance, IPipelineInstance } from '../types'
 import { ArrayItemProvider } from 'azure-devops-ui/Utilities/Provider'
-import { SafeAgo } from './SafeAgo'
+import { DeploymentTableCell } from './DeploymentTableCell'
 import { getBuildName } from '../api/BuildClient'
 
 export const ListViewDeploymentsTable = (props: {
@@ -16,13 +12,41 @@ export const ListViewDeploymentsTable = (props: {
 }): JSX.Element => {
     const { environments, pipelines, projectName } = props
 
+    // State to hold build names for each environment instance
+    const [buildNames, setBuildNames] = useState<Record<string, string>>({})
+
+    useEffect(() => {
+        if (!projectName) return
+        const pending: Array<Promise<void>> = []
+        const newBuildNames: Record<string, string> = {}
+        pipelines.forEach((pipeline) => {
+            Object.entries(pipeline.environments).forEach(([envName, env]) => {
+                if (env.ownerId) {
+                    const key = pipeline.key + ':' + envName
+                    pending.push(
+                        getBuildName(projectName, env.ownerId).then((name) => {
+                            newBuildNames[key] = name || env.value
+                        })
+                    )
+                } else {
+                    const key = pipeline.key + ':' + envName
+                    newBuildNames[key] = env.value
+                }
+            })
+        })
+        Promise.all(pending).then(() => {
+            setBuildNames(newBuildNames)
+        })
+    }, [pipelines, projectName])
+
     function getListViewColumns(environments: IEnvironmentInstance[]): Array<IDashboardEnvironmentColumn> {
         const columns: IDashboardEnvironmentColumn[] = []
 
         columns.push({
             id: 'name',
             name: '',
-            renderCell,
+            renderCell: (index: number, columnIndex: number, tableColumn: IDashboardEnvironmentColumn, tableItem: IPipelineInstance) =>
+                renderCell(index, columnIndex, tableColumn, tableItem),
             width: 250,
             conventionSortOrder: 0,
         } as IDashboardEnvironmentColumn)
@@ -31,7 +55,8 @@ export const ListViewDeploymentsTable = (props: {
             return {
                 id: environment.name,
                 name: environment.name,
-                renderCell,
+                renderCell: (index: number, columnIndex: number, tableColumn: IDashboardEnvironmentColumn, tableItem: IPipelineInstance) =>
+                    renderCell(index, columnIndex, tableColumn, tableItem),
                 width: 200,
             } as IDashboardEnvironmentColumn
         })
@@ -39,67 +64,23 @@ export const ListViewDeploymentsTable = (props: {
         return columns.concat(dynamicColumns)
     }
 
-    // Helper component for deferred build name lookup
-    const BuildNameCell = ({ value, ownerId, uri }: { value: string; ownerId?: number; uri: string }) => {
-        const [buildName, setBuildName] = useState<string | undefined>(!ownerId ? value : undefined)
-        useEffect(() => {
-            let cancelled = false
-            async function fetchName() {
-                if (ownerId && projectName) {
-                    const name = await getBuildName(projectName, ownerId)
-                    if (!cancelled) setBuildName(name || value)
-                } else {
-                    setBuildName(value)
-                }
-            }
-            fetchName()
-            return () => {
-                cancelled = true
-            }
-        }, [ownerId, projectName, value])
-        return (
-            <Link className="bolt-table-inline-link bolt-table-link no-underline-link" target="_top" href={uri}>
-                {buildName || value}
-            </Link>
-        )
-    }
-
     const renderCell = (_index: number, columnIndex: number, tableColumn: IDashboardEnvironmentColumn, tableItem: IPipelineInstance) => {
+        let buildName: string | undefined = undefined
+        if (tableColumn.id !== 'name') {
+            const env = tableItem.environments[tableColumn.id]
+            if (env) {
+                const key = tableItem.key + ':' + tableColumn.id
+                buildName = buildNames[key] || env.value
+            }
+        }
         return (
-            <SimpleTableCell
+            <DeploymentTableCell
                 columnIndex={columnIndex}
                 tableColumn={tableColumn}
                 key={'col-' + columnIndex}
-                contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m bolt-table-cell-content-with-inline-link"
-            >
-                {tableColumn.id === 'name' ? (
-                    <Link className="bolt-table-inline-link bolt-table-link no-underline-link" target="_top" href={tableItem.uri}>
-                        {tableItem.name}
-                    </Link>
-                ) : tableItem.environments[tableColumn.id] ? (
-                    <div className="flex-row flex-start">
-                        <Status
-                            {...getStatusIndicatorData(tableItem.environments[tableColumn.id].result).statusProps}
-                            className="icon-large-margin status-icon"
-                            size={StatusSize.m}
-                        />
-                        <div className="flex-column wrap-text">
-                            <BuildNameCell
-                                value={tableItem.environments[tableColumn.id].value}
-                                ownerId={tableItem.environments[tableColumn.id].ownerId}
-                                uri={tableItem.environments[tableColumn.id].uri}
-                            />
-                            <div className="finish-date">
-                                {tableItem.environments[tableColumn.id].finishTime && (
-                                    <SafeAgo date={tableItem.environments[tableColumn.id].finishTime} format={AgoFormat.Extended} />
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="no-data">-</div>
-                )}
-            </SimpleTableCell>
+                tableItem={tableItem}
+                buildName={buildName}
+            />
         )
     }
 
