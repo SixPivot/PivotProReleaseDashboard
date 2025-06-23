@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { IDashboardEnvironmentColumn, IEnvironmentInstance, IPipelineInstance } from '../types'
 import { ArrayItemProvider } from 'azure-devops-ui/Utilities/Provider'
 import { DeploymentTableCell } from './DeploymentTableCell'
-import { getBuildName } from '../api/BuildClient'
+import { getBuild } from '../api/BuildClient'
 
 export const ListViewDeploymentsTable = (props: {
     environments: IEnvironmentInstance[]
@@ -21,11 +21,11 @@ export const ListViewDeploymentsTable = (props: {
         const newBuildNames: Record<string, string> = {}
         pipelines.forEach((pipeline) => {
             Object.entries(pipeline.environments).forEach(([envName, env]) => {
-                if (env.ownerId) {
+                if (env.buildId) {
                     const key = pipeline.key + ':' + envName
                     pending.push(
-                        getBuildName(projectName, env.ownerId).then((name) => {
-                            newBuildNames[key] = name || env.value
+                        getBuild(projectName, env.buildId).then((build) => {
+                            newBuildNames[key] = build?.buildNumber || env.value
                         })
                     )
                 } else {

@@ -39,7 +39,7 @@ export interface IDeploymentInstance {
     folder?: string
     finishTime: Date
     uri: string
-    ownerId?: number // Added for deferred build name lookup
+    buildId?: number // Added for deferred build name lookup
 }
 
 /**

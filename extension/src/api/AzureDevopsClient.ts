@@ -70,7 +70,7 @@ function generatePipelineInstancesArray(environments: IEnvironmentPipelines[]): 
 
             pipelineInfo.environments[environment.name] = {
                 value: environment.pipeline[key].deployment.owner.name, // UI will resolve build name
-                ownerId: environment.pipeline[key].deployment.owner?.id, // pass owner id for deferred lookup
+                buildId: environment.pipeline[key].deployment.owner?.id, // pass owner id for deferred lookup
                 finishTime: environment.pipeline[key].deployment.finishTime,
                 result: environment.pipeline[key].deployment.result,
                 folder: environment.pipeline[key].pipeline?.folder,
