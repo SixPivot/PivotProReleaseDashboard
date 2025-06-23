@@ -4,4 +4,4 @@ Source code for the extension is in the extension subdirectory.
 
 We use TypeScript where possible.
 
-It usee React 16.
+It uses React 16.
