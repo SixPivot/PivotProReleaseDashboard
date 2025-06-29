@@ -30,7 +30,13 @@ interface DeploymentTableCellProps {
     approvalName?: string
 }
 
-export const DeploymentTableCell: React.FC<DeploymentTableCellProps> = ({ columnIndex, tableColumn, tableItem, buildName, approvalName }) => {
+export const DeploymentTableCell: React.FC<DeploymentTableCellProps> = ({
+    columnIndex,
+    tableColumn,
+    tableItem,
+    buildName,
+    approvalName,
+}) => {
     if (tableColumn.id === 'name') {
         return (
             <SimpleTableCell
@@ -66,8 +72,8 @@ export const DeploymentTableCell: React.FC<DeploymentTableCellProps> = ({ column
                         <Icon
                             iconName="ReceiptCheck"
                             size={IconSize.medium}
-                            style={{ color: 'blue'}}
-                            tooltipProps={{ text: `Approved by: ${approvalName}`,  }}
+                            style={{ color: 'blue' }}
+                            tooltipProps={{ text: `Approved by: ${approvalName}` }}
                         />
                     )}
                 </div>

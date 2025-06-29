@@ -23,7 +23,8 @@
     },
     "include": ["src"],
     "exclude": [
-        "src/__mocks__/*.js",
-        "src/dashboard/*.test.data.js"
+        "src/__mocks__/**/*.js",
+        "src/dashboard/**/*.test.data.js",
+        "src/dashboard/DashboardContent.test.data.js"
     ]
 }
