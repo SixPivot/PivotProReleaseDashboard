@@ -6,10 +6,12 @@ import { AgoFormat } from 'azure-devops-ui/Utilities/Date'
 import { getStatusIndicatorData } from '../utilities'
 import { IDashboardEnvironmentColumn, IPipelineInstance } from '../types'
 import { SafeAgo } from './SafeAgo'
+import { Icon, IconSize } from 'azure-devops-ui/Icon'
 
 interface BuildNameCellProps {
     buildName: string
     uri: string
+    approvalName?: string
 }
 
 const BuildNameCell: React.FC<BuildNameCellProps> = ({ buildName, uri }) => {
@@ -25,9 +27,16 @@ interface DeploymentTableCellProps {
     tableColumn: IDashboardEnvironmentColumn
     tableItem: IPipelineInstance
     buildName?: string
+    approvalName?: string
 }
 
-export const DeploymentTableCell: React.FC<DeploymentTableCellProps> = ({ columnIndex, tableColumn, tableItem, buildName }) => {
+export const DeploymentTableCell: React.FC<DeploymentTableCellProps> = ({
+    columnIndex,
+    tableColumn,
+    tableItem,
+    buildName,
+    approvalName,
+}) => {
     if (tableColumn.id === 'name') {
         return (
             <SimpleTableCell
@@ -59,6 +68,14 @@ export const DeploymentTableCell: React.FC<DeploymentTableCellProps> = ({ column
                         <BuildNameCell buildName={buildName || env.value} uri={env.uri} />
                         <div className="finish-date">{env.finishTime && <SafeAgo date={env.finishTime} format={AgoFormat.Extended} />}</div>
                     </div>
+                    {approvalName && (
+                        <Icon
+                            iconName="ReceiptCheck"
+                            size={IconSize.medium}
+                            style={{ color: 'blue' }}
+                            tooltipProps={{ text: `Approved by: ${approvalName}` }}
+                        />
+                    )}
                 </div>
             ) : (
                 <div className="no-data">-</div>

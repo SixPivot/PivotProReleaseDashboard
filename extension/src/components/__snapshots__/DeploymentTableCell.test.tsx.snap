@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeploymentTableCell renders the build name and finish date 1`] = `
+<div>
+  <td
+    aria-colindex="2"
+    class="bolt-table-cell bolt-list-cell"
+    data-column-index="1"
+    role="gridcell"
+  >
+    <div
+      class="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m bolt-table-cell-content-with-inline-link bolt-table-cell-content flex-row flex-center"
+    >
+      <div
+        class="flex-row flex-start"
+      >
+        <svg
+          aria-labelledby="__bolt-status-1-desc"
+          class="bolt-status flex-noshrink failed icon-large-margin status-icon"
+          height="16"
+          role="img"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <desc
+            id="__bolt-status-1-desc"
+          >
+            Failed
+          </desc>
+          <circle
+            cx="8"
+            cy="8"
+            r="8"
+          />
+          <path
+            d="M10.984 5.004a.9.9 0 0 1 0 1.272L9.27 7.99l1.74 1.741a.9.9 0 1 1-1.272 1.273l-1.74-1.741-1.742 1.74a.9.9 0 1 1-1.272-1.272l1.74-1.74-1.713-1.714a.9.9 0 0 1 1.273-1.273l1.713 1.713 1.714-1.713a.9.9 0 0 1 1.273 0z"
+            fill="#fff"
+          />
+        </svg>
+        <div
+          class="flex-column wrap-text"
+        >
+          <a
+            class="bolt-table-inline-link bolt-table-link no-underline-link bolt-link"
+            href="https://dev.azure.com/org/project/_build/results?buildId=1"
+            rel="noopener"
+            tabindex="0"
+            target="_top"
+          >
+            Build 123
+          </a>
+          <div
+            class="finish-date"
+          >
+            <span
+              aria-label="Sun at 12:00 PM Jun 29, 2025 at 12:00 PM UTC"
+              class="text-ellipsis"
+            >
+              <time
+                class="bolt-time-item white-space-nowrap"
+                datetime="2025-06-29T12:00:00.000Z"
+              >
+                Sun at 12:00 PM
+              </time>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </td>
+</div>
+`;
