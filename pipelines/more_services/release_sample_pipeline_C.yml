@@ -49,7 +49,7 @@ stages:
   - stage: prod
     jobs:
       - deployment: prod
-        environment: Prod
+        environment: Production
         strategy:
           runOnce:
             deploy:
