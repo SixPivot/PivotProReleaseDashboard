@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { IDashboardEnvironmentColumn, IEnvironmentInstance, IPipelineInstance } from '../types'
 import { ArrayItemProvider } from 'azure-devops-ui/Utilities/Provider'
 import { DeploymentTableCell } from './DeploymentTableCell'
-import { getBuild } from '../api/BuildClient'
+import { getBuild, getBuildTimeline } from '../api/BuildClient'
+import { getPipelineApprovals } from '../api/PipelineApprovalsClient'
 
 export const ListViewDeploymentsTable = (props: {
     environments: IEnvironmentInstance[]
@@ -14,10 +15,13 @@ export const ListViewDeploymentsTable = (props: {
 
     // State to hold build names for each environment instance
     const [buildNames, setBuildNames] = useState<Record<string, string>>({})
+    const [approvalNames, setApprovalNames] = useState<Record<string, string>>({})
 
     useEffect(() => {
         if (!projectName) return
         const newBuildNames: Record<string, string> = {}
+        const newApprovalNames: Record<string, string> = {}
+        // Function to fetch build names and approval information
         async function fetchBuildNames() {
             const pending: Array<Promise<void>> = []
             pipelines.forEach((pipeline) => {
@@ -28,6 +32,51 @@ export const ListViewDeploymentsTable = (props: {
                             (async () => {
                                 const build = await getBuild(projectName!, env.buildId!);
                                 newBuildNames[key] = build?.buildNumber || env.value;
+
+                                if (!build) return;
+
+                                console.log(`Environment: ${envName}, Build: ${build.buildNumber}, Pipeline: ${pipeline.name}`);
+
+                                const buildId = build.id;
+                                console.log(`Build ID: ${buildId}`);
+
+                                const timeline = await getBuildTimeline(projectName!, env.buildId!);
+                            
+                                if (!timeline) {
+                                    console.warn(`No timeline found for build ID: ${buildId}`);
+                                    return;
+                                }
+
+                                // See if there are any Checkpoint.Approval records in the timeline
+                                const approvalTimelineRecord = timeline.records.find(record => record.type === 'Checkpoint.Approval');
+
+                                if (!approvalTimelineRecord) {
+                                    console.warn(`No approval timeline record found for build ID: ${buildId}`);
+                                    return;
+                                }
+
+                                const approvals = await getPipelineApprovals(projectName!);
+
+                                if (!approvals || approvals.length === 0) {
+                                    console.warn(`No approvals found for project: ${projectName}`);
+                                    return;
+                                }
+
+                                const approval = approvals.find(a => a.id === approvalTimelineRecord.id);
+
+                                if (!approval) {
+                                    console.warn(`No approval found for timeline record ID: ${approvalTimelineRecord.id}`);
+                                    return;
+                                }
+                                console.log(`Approval found: ${approval.id} - ${approval.status}`);
+
+                                const approver = approval?.steps[0]?.actualApprover?.displayName;
+
+                                if (approver) {
+                                    newApprovalNames[key] = approver;
+                                } else {
+                                    console.warn(`No approver found for approval ID: ${approval.id}`);
+                                }
                             })()
                         )
                     } else {
@@ -37,6 +86,7 @@ export const ListViewDeploymentsTable = (props: {
             })
             await Promise.all(pending)
             setBuildNames(newBuildNames)
+            setApprovalNames(newApprovalNames)
         }
         fetchBuildNames()
     }, [pipelines, projectName])
@@ -68,11 +118,13 @@ export const ListViewDeploymentsTable = (props: {
 
     const renderCell = (_index: number, columnIndex: number, tableColumn: IDashboardEnvironmentColumn, tableItem: IPipelineInstance) => {
         let buildName: string | undefined = undefined
+        let approvalName: string | undefined = undefined
         if (tableColumn.id !== 'name') {
             const env = tableItem.environments[tableColumn.id]
             if (env) {
                 const key = tableItem.key + ':' + tableColumn.id
                 buildName = buildNames[key] || env.value
+                approvalName = approvalNames[key]
             }
         }
         return (
@@ -82,6 +134,7 @@ export const ListViewDeploymentsTable = (props: {
                 key={'col-' + columnIndex}
                 tableItem={tableItem}
                 buildName={buildName}
+                approvalName={approvalName}
             />
         )
     }
