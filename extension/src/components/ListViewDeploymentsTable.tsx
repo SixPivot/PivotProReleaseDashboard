@@ -17,26 +17,28 @@ export const ListViewDeploymentsTable = (props: {
 
     useEffect(() => {
         if (!projectName) return
-        const pending: Array<Promise<void>> = []
         const newBuildNames: Record<string, string> = {}
-        pipelines.forEach((pipeline) => {
-            Object.entries(pipeline.environments).forEach(([envName, env]) => {
-                if (env.buildId) {
+        async function fetchBuildNames() {
+            const pending: Array<Promise<void>> = []
+            pipelines.forEach((pipeline) => {
+                Object.entries(pipeline.environments).forEach(([envName, env]) => {
                     const key = pipeline.key + ':' + envName
-                    pending.push(
-                        getBuild(projectName, env.buildId).then((build) => {
-                            newBuildNames[key] = build?.buildNumber || env.value
-                        })
-                    )
-                } else {
-                    const key = pipeline.key + ':' + envName
-                    newBuildNames[key] = env.value
-                }
+                    if (env.buildId) {
+                        pending.push(
+                            (async () => {
+                                const build = await getBuild(projectName!, env.buildId!);
+                                newBuildNames[key] = build?.buildNumber || env.value;
+                            })()
+                        )
+                    } else {
+                        newBuildNames[key] = env.value
+                    }
+                })
             })
-        })
-        Promise.all(pending).then(() => {
+            await Promise.all(pending)
             setBuildNames(newBuildNames)
-        })
+        }
+        fetchBuildNames()
     }, [pipelines, projectName])
 
     function getListViewColumns(environments: IEnvironmentInstance[]): Array<IDashboardEnvironmentColumn> {
