@@ -25,63 +25,76 @@ export const ListViewDeploymentsTable = (props: {
         async function fetchBuildNames() {
             const pending: Array<Promise<void>> = []
             pipelines.forEach((pipeline) => {
-                Object.entries(pipeline.environments).forEach(([envName, env]) => {
+                Object.entries(pipeline.environments).forEach(([envName, deploymentInstance]) => {
                     const key = pipeline.key + ':' + envName
-                    if (env.buildId) {
-                        pending.push(
-                            (async () => {
-                                const build = await getBuild(projectName!, env.buildId!);
-                                newBuildNames[key] = build?.buildNumber || env.value;
+                    pending.push(
+                        (async () => {
+                            const build = await getBuild(projectName!, deploymentInstance.buildId!);
+                            newBuildNames[key] = build?.buildNumber || deploymentInstance.value;
 
-                                if (!build) return;
+                            if (!build) return;
 
-                                console.log(`Environment: ${envName}, Build: ${build.buildNumber}, Pipeline: ${pipeline.name}`);
+                            const buildId = build.id;
 
-                                const buildId = build.id;
-                                console.log(`Build ID: ${buildId}`);
+                            const timeline = await getBuildTimeline(projectName!, deploymentInstance.buildId!);
+                        
+                            if (!timeline) {
+                                console.warn(`No timeline found for build ID: ${buildId}`);
+                                return;
+                            }
 
-                                const timeline = await getBuildTimeline(projectName!, env.buildId!);
+                            // See if there are any Checkpoint.Approval records in the timeline
+                            // whose parent's parent is type 'Stage' and has the same name as the stageName
                             
-                                if (!timeline) {
-                                    console.warn(`No timeline found for build ID: ${buildId}`);
-                                    return;
-                                }
+                            const approvalTimelineRecord = timeline.records.find(record => record.type === 'Checkpoint.Approval');
 
-                                // See if there are any Checkpoint.Approval records in the timeline
-                                const approvalTimelineRecord = timeline.records.find(record => record.type === 'Checkpoint.Approval');
+                            if (!approvalTimelineRecord) {
+                                console.warn(`No approval timeline record found for build ID: ${buildId}`);
+                                return;
+                            }
 
-                                if (!approvalTimelineRecord) {
-                                    console.warn(`No approval timeline record found for build ID: ${buildId}`);
-                                    return;
-                                }
+                            const checkpointRecord = timeline.records.find(record => record.id === approvalTimelineRecord.parentId);
+                            if (!checkpointRecord) {
+                                console.warn(`No checkpoint record found for approval timeline record ID: ${approvalTimelineRecord.id}`);
+                                return;
+                            }
 
-                                const approvals = await getPipelineApprovals(projectName!);
+                            const stageRecord = timeline.records.find(record => record.id === checkpointRecord.parentId && record.type === 'Stage' && record.name === deploymentInstance.stageName);
+                            if (!stageRecord) {
+                                // This is expected if there is no approval required for this stage
+                                //console.warn(`No stage record found for approval timeline record ID: ${approvalTimelineRecord.id} with stage name: ${deploymentInstance.stageName}`);
+                                return;
+                            }
 
-                                if (!approvals || approvals.length === 0) {
-                                    console.warn(`No approvals found for project: ${projectName}`);
-                                    return;
-                                }
+                            const approvals = await getPipelineApprovals(projectName!);
 
-                                const approval = approvals.find(a => a.id === approvalTimelineRecord.id);
+                            if (!approvals || approvals.length === 0) {
+                                console.warn(`No approvals found for project: ${projectName}`);
+                                return;
+                            }
 
-                                if (!approval) {
-                                    console.warn(`No approval found for timeline record ID: ${approvalTimelineRecord.id}`);
-                                    return;
-                                }
+                            const approval = approvals.find(a => a.id === approvalTimelineRecord.id);
+
+                            if (!approval) {
+                                console.warn(`No approval found for timeline record ID: ${approvalTimelineRecord.id}`);
+                                return;
+                            }
+
+                            const approver = approval?.steps[0]?.actualApprover?.displayName;
+
+                            if (approver) {
+                                newApprovalNames[key] = approver;
+
+                                console.log(`Environment: ${envName}, Build: ${build.buildNumber}, Build ID: ${buildId}, Pipeline: ${pipeline.name}, Stage: ${deploymentInstance.stageName}`);
                                 console.log(`Approval found: ${approval.id} - ${approval.status}`);
+                                console.log(key)
 
-                                const approver = approval?.steps[0]?.actualApprover?.displayName;
+                            } else {
+                                console.warn(`No approver found for approval ID: ${approval.id}`);
+                            }
+                        })()
+                    )
 
-                                if (approver) {
-                                    newApprovalNames[key] = approver;
-                                } else {
-                                    console.warn(`No approver found for approval ID: ${approval.id}`);
-                                }
-                            })()
-                        )
-                    } else {
-                        newBuildNames[key] = env.value
-                    }
                 })
             })
             await Promise.all(pending)

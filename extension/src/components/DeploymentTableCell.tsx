@@ -1,11 +1,12 @@
 import React from 'react'
 import { SimpleTableCell } from 'azure-devops-ui/Table'
 import { Link } from 'azure-devops-ui/Link'
-import { Status, Statuses, StatusSize } from 'azure-devops-ui/Status'
+import { Status, StatusSize } from 'azure-devops-ui/Status'
 import { AgoFormat } from 'azure-devops-ui/Utilities/Date'
 import { getStatusIndicatorData } from '../utilities'
 import { IDashboardEnvironmentColumn, IPipelineInstance } from '../types'
 import { SafeAgo } from './SafeAgo'
+import { Icon, IconSize } from 'azure-devops-ui/Icon'
 
 interface BuildNameCellProps {
     buildName: string
@@ -62,11 +63,11 @@ export const DeploymentTableCell: React.FC<DeploymentTableCellProps> = ({ column
                         <div className="finish-date">{env.finishTime && <SafeAgo date={env.finishTime} format={AgoFormat.Extended} />}</div>
                     </div>
                     {approvalName && (
-                        <Status {...Statuses.Information}
-                            className="icon-large-margin status-icon"
-                            size={StatusSize.m}
-                            text=' '
-                            tooltipContent={() =>`Approved by: ${approvalName}`}
+                        <Icon
+                            iconName="ReceiptCheck"
+                            size={IconSize.medium}
+                            style={{ color: 'blue'}}
+                            tooltipProps={{ text: `Approved by: ${approvalName}`,  }}
                         />
                     )}
                 </div>

@@ -39,7 +39,9 @@ export interface IDeploymentInstance {
     folder?: string
     finishTime: Date
     uri: string
-    buildId?: number // Added for deferred build name lookup
+    buildId: number // Added for deferred build name lookup
+    environmentId: number // Added to track environment ID
+    stageName: string // Added to track stage name
 }
 
 /**
@@ -57,6 +59,9 @@ export interface IPipelineInstance {
     key: string
     name: string
     uri: string
+    /**
+     * A dictionary of environment names and their associated deployment information
+     */
     environments: IEnvironmentDeploymentDictionary
 }
 

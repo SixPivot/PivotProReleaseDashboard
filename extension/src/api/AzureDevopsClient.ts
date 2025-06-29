@@ -70,11 +70,13 @@ function generatePipelineInstancesArray(environments: IEnvironmentPipelines[]): 
 
             pipelineInfo.environments[environment.name] = {
                 value: environment.pipeline[key].deployment.owner.name, // UI will resolve build name
-                buildId: environment.pipeline[key].deployment.owner?.id, // pass owner id for deferred lookup
+                buildId: environment.pipeline[key].deployment.owner.id, // pass owner id for deferred lookup
                 finishTime: environment.pipeline[key].deployment.finishTime,
                 result: environment.pipeline[key].deployment.result,
                 folder: environment.pipeline[key].pipeline?.folder,
                 uri: environment.pipeline[key].deployment.owner?._links['web'].href,
+                environmentId: environment.pipeline[key].deployment.environmentId, // Added to track environment ID
+                stageName: environment.pipeline[key].deployment.stageName, // Added to track stage name
             }
         }
     }
