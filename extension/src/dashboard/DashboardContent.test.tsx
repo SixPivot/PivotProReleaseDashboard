@@ -6,6 +6,8 @@ import { data } from './DashboardContent.test.data'
 import { DashboardContent } from './DashboardContent'
 import { IDashboardContentState } from '../types'
 
+jest.mock('../api/PipelineApprovalsRestClient')
+
 test('Render and check layout', async () => {
     render(<DashboardContent state={data as unknown as IDashboardContentState} />)
 
