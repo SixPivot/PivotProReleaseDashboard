@@ -11,6 +11,17 @@ import '@testing-library/jest-dom'
 import { DeploymentTableCell } from './DeploymentTableCell'
 import { IDashboardEnvironmentColumn, IPipelineInstance } from '../types'
 
+// Helper function to render table cell with proper table structure
+const renderTableCell = (component: React.ReactElement) => {
+    return render(
+        <table>
+            <tbody>
+                <tr>{component}</tr>
+            </tbody>
+        </table>
+    )
+}
+
 const TaskResult = { Succeeded: 2 }
 
 const baseColumn: IDashboardEnvironmentColumn = {
@@ -41,12 +52,12 @@ const basePipeline: IPipelineInstance = {
 
 describe('DeploymentTableCell', () => {
     it('renders the pipeline name cell', () => {
-        render(<DeploymentTableCell columnIndex={0} tableColumn={{ ...baseColumn, id: 'name' }} tableItem={basePipeline} />)
+        renderTableCell(<DeploymentTableCell columnIndex={0} tableColumn={{ ...baseColumn, id: 'name' }} tableItem={basePipeline} />)
         expect(screen.getByRole('link', { name: /Pipeline 1/i })).toBeInTheDocument()
     })
 
     it('renders the build name and finish date', () => {
-        const { container } = render(
+        const { container } = renderTableCell(
             <DeploymentTableCell columnIndex={1} tableColumn={baseColumn} tableItem={basePipeline} buildName="Build 123" />
         )
 
@@ -54,7 +65,7 @@ describe('DeploymentTableCell', () => {
     })
 
     it('renders the approval icon if approvalName is provided', async () => {
-        render(
+        renderTableCell(
             <DeploymentTableCell
                 columnIndex={1}
                 tableColumn={baseColumn}
@@ -73,7 +84,7 @@ describe('DeploymentTableCell', () => {
             ...basePipeline,
             environments: {},
         }
-        render(<DeploymentTableCell columnIndex={1} tableColumn={baseColumn} tableItem={pipelineNoEnv} />)
+        renderTableCell(<DeploymentTableCell columnIndex={1} tableColumn={baseColumn} tableItem={pipelineNoEnv} />)
         expect(screen.getByText('-')).toBeInTheDocument()
     })
 })
