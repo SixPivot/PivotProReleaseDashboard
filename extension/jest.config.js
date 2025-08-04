@@ -12,4 +12,7 @@ module.exports = {
         '\\.(css|less|scss)$': '<rootDir>/src/__mocks__/styleMock.js',
     },
     transformIgnorePatterns: ['node_modules/(?!(azure-devops-ui|azure-devops-extension-sdk)/)'],
+    testTimeout: 10000,
+    forceExit: true,
+    detectOpenHandles: true,
 }
