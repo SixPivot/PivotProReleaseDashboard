@@ -3,24 +3,119 @@ import { ITreeColumn, renderExpandableTreeCell, Tree } from 'azure-devops-ui/Tre
 import { ITreeItem, ITreeItemEx, TreeItemProvider } from 'azure-devops-ui/Utilities/TreeItemProvider'
 import { IItemProvider } from 'azure-devops-ui/Utilities/Provider'
 import { IReadonlyObservableValue } from 'azure-devops-ui/Core/Observable'
-import { IDeploymentTableItem, IPipelineInstance } from '../types'
+import { IDeploymentTableItem, IPipelineInstance, IDashboardEnvironmentColumn } from '../types'
 import { IEnvironmentInstance } from '../types'
 import { SimpleTableCell } from 'azure-devops-ui/Table'
-import { Status, StatusSize } from 'azure-devops-ui/Status'
-import { getStatusIndicatorData } from '../utilities'
-import { Link } from 'azure-devops-ui/Link'
 import { useState, useEffect } from 'react'
 import { ITreeItemProvider } from 'azure-devops-ui/Utilities/TreeItemProvider'
-import { AgoFormat } from 'azure-devops-ui/Utilities/Date'
-import { SafeAgo } from './SafeAgo'
+import { DeploymentTableCell } from './DeploymentTableCell'
+import { getBuild, getBuildTimeline } from '../api/BuildClient'
+import { getPipelineApprovals } from '../api/PipelineApprovalsClient'
 
-export const TreeViewDeploymentsTable = (props: { environments: IEnvironmentInstance[]; pipelines: IPipelineInstance[] }): JSX.Element => {
-    const { environments, pipelines } = props
+export const TreeViewDeploymentsTable = (props: {
+    environments: IEnvironmentInstance[]
+    pipelines: IPipelineInstance[]
+    projectName?: string
+}): JSX.Element => {
+    const { environments, pipelines, projectName } = props
     const [folderViewItemProvider, setFolderViewItemProvider] = useState<ITreeItemProvider<IDeploymentTableItem>>()
+
+    // State to hold build names and approval names for each environment instance
+    const [buildNames, setBuildNames] = useState<Record<string, string>>({})
+    const [approvalNames, setApprovalNames] = useState<Record<string, string>>({})
 
     useEffect(() => {
         if (pipelines && environments) buildTreeView()
-    }, [pipelines, environments])
+    }, [pipelines, environments, buildNames, approvalNames])
+
+    useEffect(() => {
+        if (!projectName) return
+
+        const newBuildNames: Record<string, string> = {}
+        const newApprovalNames: Record<string, string> = {}
+
+        // Function to fetch build names and approval information
+        async function fetchBuildNames() {
+            const pending: Array<Promise<void>> = []
+            let totalKeys = 0
+            pipelines.forEach((pipeline) => {
+                Object.keys(pipeline.environments).forEach((envName: string) => {
+                    const deploymentInstance = pipeline.environments[envName]
+                    const key = pipeline.key + ':' + envName
+                    totalKeys++
+                    pending.push(
+                        (async () => {
+                            const build = await getBuild(projectName!, deploymentInstance.buildId!)
+                            newBuildNames[key] = build?.buildNumber || deploymentInstance.value
+
+                            if (!build) return
+
+                            const buildId = build.id
+
+                            const timeline = await getBuildTimeline(projectName!, deploymentInstance.buildId!)
+
+                            if (!timeline) {
+                                console.warn(`No timeline found for build ID: ${buildId}`)
+                                return
+                            }
+
+                            // See if there are any Checkpoint.Approval records in the timeline
+                            // whose parent's parent is type 'Stage' and has the same name as the stageName
+                            const approvalTimelineRecord = timeline.records.find((record) => record.type === 'Checkpoint.Approval')
+
+                            if (!approvalTimelineRecord) {
+                                console.warn(`No approval timeline record found for build ID: ${buildId}`)
+                                return
+                            }
+
+                            const checkpointRecord = timeline.records.find((record) => record.id === approvalTimelineRecord.parentId)
+                            if (!checkpointRecord) {
+                                console.warn(`No checkpoint record found for approval timeline record ID: ${approvalTimelineRecord.id}`)
+                                return
+                            }
+
+                            const stageRecord = timeline.records.find(
+                                (record) =>
+                                    record.id === checkpointRecord.parentId &&
+                                    record.type === 'Stage' &&
+                                    record.name === deploymentInstance.stageName
+                            )
+                            if (!stageRecord) {
+                                // This is expected if there is no approval required for this stage
+                                return
+                            }
+
+                            const approvals = await getPipelineApprovals(projectName!)
+
+                            if (!approvals || approvals.length === 0) {
+                                console.warn(`No approvals found for project: ${projectName}`)
+                                return
+                            }
+
+                            const approval = approvals.find((a) => a.id === approvalTimelineRecord.id)
+
+                            if (!approval) {
+                                console.warn(`No approval found for timeline record ID: ${approvalTimelineRecord.id}`)
+                                return
+                            }
+
+                            const approver = approval?.steps[0]?.actualApprover?.displayName
+
+                            if (approver) {
+                                newApprovalNames[key] = approver
+                            } else {
+                                console.warn(`No approver found for approval ID: ${approval.id}`)
+                            }
+                        })()
+                    )
+                })
+            })
+            await Promise.all(pending)
+            setBuildNames(newBuildNames)
+            setApprovalNames(newApprovalNames)
+        }
+        fetchBuildNames()
+    }, [pipelines, projectName])
 
     const buildTreeView = () => {
         let treeNodeItems: ITreeItem<IDeploymentTableItem>[] = []
@@ -101,46 +196,62 @@ export const TreeViewDeploymentsTable = (props: { environments: IEnvironmentInst
     ): JSX.Element => {
         let pipeline = treeItem.underlyingItem.data.pipeline
 
-        // If row isn't a leaf node, then return no data indicator, or if environment is not applicable to the pipeline
-        if (
-            (treeItem.underlyingItem.childItems && treeItem.underlyingItem.childItems.length > 0) ||
-            !pipeline.environments[treeColumn!.name!]
-        )
+        // If row isn't a leaf node, then return no data indicator
+        if (treeItem.underlyingItem.childItems && treeItem.underlyingItem.childItems.length > 0) {
             return (
                 <SimpleTableCell key={'col-' + columnIndex} columnIndex={columnIndex}>
                     <div className="no-data">-</div>
                 </SimpleTableCell>
             )
+        }
+
+        // If there's no pipeline (folder node) or no environment data for this pipeline
+        if (!pipeline || !pipeline.environments[treeColumn!.name!]) {
+            return (
+                <SimpleTableCell key={'col-' + columnIndex} columnIndex={columnIndex}>
+                    <div className="no-data">-</div>
+                </SimpleTableCell>
+            )
+        }
+
+        // Get build name and approval name for this pipeline/environment combination
+        let buildName: string | undefined = undefined
+        let approvalName: string | undefined = undefined
+        const env = pipeline.environments[treeColumn!.name!]
+        if (env) {
+            const key = pipeline.key + ':' + treeColumn!.name!
+            buildName = buildNames[key] || env.value
+            approvalName = approvalNames[key]
+
+            // Debug: log when we have enhanced data
+            if (buildNames[key] && buildNames[key] !== env.value) {
+                console.debug('TreeView using enhanced build name:', buildNames[key], 'for key:', key)
+            }
+
+            if (approvalNames[key]) {
+                console.debug('TreeView using approval name:', approvalNames[key], 'for key:', key)
+            }
+        }
+
+        // Create a compatible table column for DeploymentTableCell
+        const tableColumn: IDashboardEnvironmentColumn = {
+            id: treeColumn.id,
+            name: treeColumn.name,
+            minWidth: 100,
+            maxWidth: typeof treeColumn.width === 'number' ? treeColumn.width : 200,
+            width: typeof treeColumn.width === 'number' ? treeColumn.width : 200,
+            renderCell: () => <></>,
+        }
 
         return (
-            <SimpleTableCell
+            <DeploymentTableCell
                 columnIndex={columnIndex}
-                tableColumn={treeColumn}
+                tableColumn={tableColumn}
                 key={'col-' + columnIndex}
-                contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m bolt-table-cell-content-with-inline-link"
-            >
-                <div className="flex-row flex-start">
-                    <Status
-                        {...getStatusIndicatorData(pipeline.environments[treeColumn!.name!].result).statusProps}
-                        className="icon-large-margin status-icon"
-                        size={StatusSize.m}
-                    />
-                    <div className="flex-column wrap-text">
-                        <Link
-                            className="bolt-table-inline-link bolt-table-link no-underline-link"
-                            target="_top"
-                            href={pipeline.environments[treeColumn!.name!].uri}
-                        >
-                            {pipeline.environments[treeColumn!.name!].value}
-                        </Link>
-                        <div className="finish-date">
-                            {pipeline.environments[treeColumn!.id!].finishTime && (
-                                <SafeAgo date={pipeline.environments[treeColumn!.id!].finishTime} format={AgoFormat.Extended} />
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </SimpleTableCell>
+                tableItem={pipeline}
+                buildName={buildName}
+                approvalName={approvalName}
+            />
         )
     }
 
