@@ -1,9 +1,9 @@
 // At the top of your test file
-const OriginalDateTimeFormat = Intl.DateTimeFormat;
+const OriginalDateTimeFormat = Intl.DateTimeFormat
 
 jest.spyOn(Intl, 'DateTimeFormat').mockImplementation((...args) => {
-  return new OriginalDateTimeFormat(['en-US'], { ...args[1], timeZone: 'UTC' });
-});
+    return new OriginalDateTimeFormat(['en-US'], { ...args[1], timeZone: 'UTC' })
+})
 
 import * as React from 'react'
 import { render, screen } from '@testing-library/react'
