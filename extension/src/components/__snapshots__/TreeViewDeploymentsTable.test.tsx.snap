@@ -1,0 +1,718 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TreeViewDeploymentsTable matches snapshot 1`] = `
+<div>
+  <div
+    class="bolt-table-container flex-grow v-scroll-auto"
+  >
+    <table
+      aria-colcount="3"
+      aria-rowcount="6"
+      class="deployments-table bolt-table bolt-table-show-lines bolt-list body-m relative scroll-hidden"
+      role="treegrid"
+      style="width: 716px;"
+      tabindex="0"
+    >
+      <colgroup>
+        <col
+          style="width: 8px;"
+        />
+        <col
+          style="width: 300px;"
+        />
+        <col
+          style="width: 200px;"
+        />
+        <col
+          style="width: 200px;"
+        />
+        <col
+          style="width: 8px;"
+        />
+      </colgroup>
+      <thead>
+        <tr
+          aria-rowindex="1"
+          class="bolt-table-header-row"
+          data-row-index="-1"
+          role="row"
+        >
+          <th
+            aria-hidden="true"
+            class="bolt-table-header-border"
+            role="presentation"
+          />
+          <th
+            aria-colindex="1"
+            aria-label="Blank"
+            aria-readonly="true"
+            class="bolt-table-header-border"
+          />
+          <th
+            aria-colindex="2"
+            aria-label="Development"
+            aria-readonly="true"
+            class="bolt-table-header-cell col-header-1"
+            data-column-index="1"
+            data-focuszone="false"
+            id="__bolt-th-col-2-Development"
+            role="columnheader"
+            tabindex="-1"
+          >
+            <div
+              class="bolt-table-header-cell-content flex-row"
+            >
+              <div
+                class="scroll-hidden"
+                id="__bolt-th-col-content-12"
+              >
+                <div
+                  class="bolt-table-header-cell-text text-ellipsis body-s"
+                >
+                  <span
+                    class=""
+                  >
+                    Development
+                  </span>
+                </div>
+              </div>
+              <div />
+            </div>
+          </th>
+          <th
+            aria-colindex="3"
+            aria-label="Production"
+            aria-readonly="true"
+            class="bolt-table-header-cell col-header-2"
+            data-column-index="2"
+            data-focuszone="false"
+            id="__bolt-th-col-3-Production"
+            role="columnheader"
+            tabindex="-1"
+          >
+            <div
+              class="bolt-table-header-cell-content flex-row"
+            >
+              <div
+                class="scroll-hidden"
+                id="__bolt-th-col-content-13"
+              >
+                <div
+                  class="bolt-table-header-cell-text text-ellipsis body-s"
+                >
+                  <span
+                    class=""
+                  >
+                    Production
+                  </span>
+                </div>
+              </div>
+              <div />
+            </div>
+          </th>
+          <th
+            aria-hidden="true"
+            class="bolt-table-header-border"
+            role="presentation"
+          />
+        </tr>
+      </thead>
+      <tbody
+        class="relative"
+      >
+        <tr
+          class="bolt-list-row-spacer invisible"
+          role="presentation"
+        >
+          <td
+            class="bolt-list-cell-spacer invisible"
+            colspan="5"
+            style="height: 0px;"
+          />
+        </tr>
+        <tr
+          class="bolt-list-row-spacer invisible"
+          role="presentation"
+        >
+          <td
+            class="bolt-list-cell-spacer invisible"
+            colspan="5"
+            style="height: 0px;"
+          />
+        </tr>
+        <tr
+          aria-busy="false"
+          aria-expanded="true"
+          aria-level="1"
+          aria-rowindex="2"
+          class="bolt-tree-row bolt-table-row bolt-list-row first-row"
+          data-focuszone="focuszone-41"
+          data-row-index="0"
+          id="__bolt-0"
+          role="row"
+          tabindex="0"
+        >
+          <td
+            class="bolt-table-cell-compact bolt-table-cell bolt-list-cell"
+            role="presentation"
+          />
+          <td
+            aria-colindex="1"
+            class="bolt-tree-cell bolt-table-cell bolt-list-cell"
+            data-column-index="0"
+            role="gridcell"
+          >
+            <div
+              class="bolt-table-cell-content flex-row flex-center"
+            >
+              <span
+                class="fluent-icons-enabled"
+              >
+                <span
+                  aria-hidden="true"
+                  class="bolt-tree-expand-button font-size cursor-pointer flex-noshrink fabric-icon ms-Icon--ChevronDownMed small"
+                  role="presentation"
+                />
+              </span>
+              <span
+                class="bolt-list-cell-child flex-row flex-center bolt-list-cell-text"
+              >
+                <span
+                  class="text-ellipsis body-m"
+                >
+                  Frontend
+                </span>
+              </span>
+            </div>
+          </td>
+          <td
+            aria-colindex="2"
+            class="bolt-table-cell bolt-list-cell"
+            data-column-index="1"
+            role="gridcell"
+          >
+            <div
+              class="bolt-table-cell-content flex-row flex-center"
+            >
+              <div
+                class="no-data"
+              >
+                -
+              </div>
+            </div>
+          </td>
+          <td
+            aria-colindex="3"
+            class="bolt-table-cell bolt-list-cell"
+            data-column-index="2"
+            role="gridcell"
+          >
+            <div
+              class="bolt-table-cell-content flex-row flex-center"
+            >
+              <div
+                class="no-data"
+              >
+                -
+              </div>
+            </div>
+          </td>
+          <td
+            class="bolt-table-cell-compact bolt-table-cell bolt-list-cell"
+            role="presentation"
+          />
+        </tr>
+        <tr
+          aria-busy="false"
+          aria-expanded="true"
+          aria-level="2"
+          aria-rowindex="3"
+          class="bolt-tree-row bolt-table-row bolt-list-row"
+          data-focuszone="focuszone-41"
+          data-row-index="1"
+          id="__bolt-1"
+          role="row"
+          tabindex="-1"
+        >
+          <td
+            class="bolt-table-cell-compact bolt-table-cell bolt-list-cell"
+            role="presentation"
+          />
+          <td
+            aria-colindex="1"
+            class="bolt-tree-cell bolt-table-cell bolt-list-cell"
+            data-column-index="0"
+            role="gridcell"
+          >
+            <div
+              class="bolt-table-cell-content flex-row flex-center"
+            >
+              <span
+                class="fluent-icons-enabled"
+              >
+                <span
+                  aria-hidden="true"
+                  class="bolt-tree-expand-button font-size cursor-pointer invisible flex-noshrink fabric-icon ms-Icon--ChevronDownMed small"
+                  role="presentation"
+                  style="margin-left: 16px;"
+                />
+              </span>
+              <span
+                class="bolt-list-cell-child flex-row flex-center bolt-list-cell-text"
+              >
+                <span
+                  class="text-ellipsis body-m"
+                >
+                  Pipeline 1
+                </span>
+              </span>
+            </div>
+          </td>
+          <td
+            aria-colindex="2"
+            class="bolt-table-cell bolt-list-cell"
+            data-column-index="1"
+            role="gridcell"
+          >
+            <div
+              class="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m bolt-table-cell-content-with-inline-link bolt-table-cell-content flex-row flex-center"
+            >
+              <div
+                class="flex-row flex-start"
+              >
+                <svg
+                  aria-labelledby="__bolt-status-17-desc"
+                  class="bolt-status flex-noshrink failed icon-large-margin status-icon"
+                  height="16"
+                  role="img"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <desc
+                    id="__bolt-status-17-desc"
+                  >
+                    Failed
+                  </desc>
+                  <circle
+                    cx="8"
+                    cy="8"
+                    r="8"
+                  />
+                  <path
+                    d="M10.984 5.004a.9.9 0 0 1 0 1.272L9.27 7.99l1.74 1.741a.9.9 0 1 1-1.272 1.273l-1.74-1.741-1.742 1.74a.9.9 0 1 1-1.272-1.272l1.74-1.74-1.713-1.714a.9.9 0 0 1 1.273-1.273l1.713 1.713 1.714-1.713a.9.9 0 0 1 1.273 0z"
+                    fill="#fff"
+                  />
+                </svg>
+                <div
+                  class="flex-column wrap-text"
+                >
+                  <a
+                    class="bolt-table-inline-link bolt-table-link no-underline-link bolt-link"
+                    data-focuszone="focuszone-44"
+                    href="https://dev.azure.com/org/project/_build/results?buildId=1"
+                    rel="noopener"
+                    tabindex="0"
+                    target="_top"
+                  >
+                    Build 123
+                  </a>
+                  <div
+                    class="finish-date"
+                  >
+                    <span
+                      data-testid="safe-ago"
+                    >
+                      2025-06-29T12:00:00.000Z
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td
+            aria-colindex="3"
+            class="bolt-table-cell bolt-list-cell"
+            data-column-index="2"
+            role="gridcell"
+          >
+            <div
+              class="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m bolt-table-cell-content-with-inline-link bolt-table-cell-content flex-row flex-center"
+            >
+              <div
+                class="flex-row flex-start"
+              >
+                <svg
+                  aria-labelledby="__bolt-status-18-desc"
+                  class="bolt-status flex-noshrink success icon-large-margin status-icon"
+                  height="16"
+                  role="img"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <desc
+                    id="__bolt-status-18-desc"
+                  >
+                    Success
+                  </desc>
+                  <circle
+                    cx="8"
+                    cy="8"
+                    r="8"
+                  />
+                  <path
+                    d="M6.062 11.144l-.003-.002-1.784-1.785A.937.937 0 1 1 5.6 8.031l1.125 1.124 3.88-3.88A.937.937 0 1 1 11.931 6.6l-4.54 4.54-.004.004a.938.938 0 0 1-1.325 0z"
+                    fill="#fff"
+                  />
+                </svg>
+                <div
+                  class="flex-column wrap-text"
+                >
+                  <a
+                    class="bolt-table-inline-link bolt-table-link no-underline-link bolt-link"
+                    data-focuszone="focuszone-44"
+                    href="https://dev.azure.com/org/project/_build/results?buildId=1"
+                    rel="noopener"
+                    tabindex="0"
+                    target="_top"
+                  >
+                    Build 123
+                  </a>
+                  <div
+                    class="finish-date"
+                  >
+                    <span
+                      data-testid="safe-ago"
+                    >
+                      2025-06-29T14:00:00.000Z
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td
+            class="bolt-table-cell-compact bolt-table-cell bolt-list-cell"
+            role="presentation"
+          />
+        </tr>
+        <tr
+          aria-busy="false"
+          aria-expanded="true"
+          aria-level="1"
+          aria-rowindex="4"
+          class="bolt-tree-row bolt-table-row bolt-list-row"
+          data-focuszone="focuszone-41"
+          data-row-index="2"
+          id="__bolt-2"
+          role="row"
+          tabindex="-1"
+        >
+          <td
+            class="bolt-table-cell-compact bolt-table-cell bolt-list-cell"
+            role="presentation"
+          />
+          <td
+            aria-colindex="1"
+            class="bolt-tree-cell bolt-table-cell bolt-list-cell"
+            data-column-index="0"
+            role="gridcell"
+          >
+            <div
+              class="bolt-table-cell-content flex-row flex-center"
+            >
+              <span
+                class="fluent-icons-enabled"
+              >
+                <span
+                  aria-hidden="true"
+                  class="bolt-tree-expand-button font-size cursor-pointer flex-noshrink fabric-icon ms-Icon--ChevronDownMed small"
+                  role="presentation"
+                />
+              </span>
+              <span
+                class="bolt-list-cell-child flex-row flex-center bolt-list-cell-text"
+              >
+                <span
+                  class="text-ellipsis body-m"
+                >
+                  Backend
+                </span>
+              </span>
+            </div>
+          </td>
+          <td
+            aria-colindex="2"
+            class="bolt-table-cell bolt-list-cell"
+            data-column-index="1"
+            role="gridcell"
+          >
+            <div
+              class="bolt-table-cell-content flex-row flex-center"
+            >
+              <div
+                class="no-data"
+              >
+                -
+              </div>
+            </div>
+          </td>
+          <td
+            aria-colindex="3"
+            class="bolt-table-cell bolt-list-cell"
+            data-column-index="2"
+            role="gridcell"
+          >
+            <div
+              class="bolt-table-cell-content flex-row flex-center"
+            >
+              <div
+                class="no-data"
+              >
+                -
+              </div>
+            </div>
+          </td>
+          <td
+            class="bolt-table-cell-compact bolt-table-cell bolt-list-cell"
+            role="presentation"
+          />
+        </tr>
+        <tr
+          aria-busy="false"
+          aria-expanded="true"
+          aria-level="2"
+          aria-rowindex="5"
+          class="bolt-tree-row bolt-table-row bolt-list-row"
+          data-focuszone="focuszone-41"
+          data-row-index="3"
+          id="__bolt-3"
+          role="row"
+          tabindex="-1"
+        >
+          <td
+            class="bolt-table-cell-compact bolt-table-cell bolt-list-cell"
+            role="presentation"
+          />
+          <td
+            aria-colindex="1"
+            class="bolt-tree-cell bolt-table-cell bolt-list-cell"
+            data-column-index="0"
+            role="gridcell"
+          >
+            <div
+              class="bolt-table-cell-content flex-row flex-center"
+            >
+              <span
+                class="fluent-icons-enabled"
+              >
+                <span
+                  aria-hidden="true"
+                  class="bolt-tree-expand-button font-size cursor-pointer flex-noshrink fabric-icon ms-Icon--ChevronDownMed small"
+                  role="presentation"
+                  style="margin-left: 16px;"
+                />
+              </span>
+              <span
+                class="bolt-list-cell-child flex-row flex-center bolt-list-cell-text"
+              >
+                <span
+                  class="text-ellipsis body-m"
+                >
+                  API
+                </span>
+              </span>
+            </div>
+          </td>
+          <td
+            aria-colindex="2"
+            class="bolt-table-cell bolt-list-cell"
+            data-column-index="1"
+            role="gridcell"
+          >
+            <div
+              class="bolt-table-cell-content flex-row flex-center"
+            >
+              <div
+                class="no-data"
+              >
+                -
+              </div>
+            </div>
+          </td>
+          <td
+            aria-colindex="3"
+            class="bolt-table-cell bolt-list-cell"
+            data-column-index="2"
+            role="gridcell"
+          >
+            <div
+              class="bolt-table-cell-content flex-row flex-center"
+            >
+              <div
+                class="no-data"
+              >
+                -
+              </div>
+            </div>
+          </td>
+          <td
+            class="bolt-table-cell-compact bolt-table-cell bolt-list-cell"
+            role="presentation"
+          />
+        </tr>
+        <tr
+          aria-busy="false"
+          aria-expanded="true"
+          aria-level="3"
+          aria-rowindex="6"
+          class="bolt-tree-row bolt-table-row bolt-list-row"
+          data-focuszone="focuszone-41"
+          data-row-index="4"
+          id="__bolt-4"
+          role="row"
+          tabindex="-1"
+        >
+          <td
+            class="bolt-table-cell-compact bolt-table-cell bolt-list-cell"
+            role="presentation"
+          />
+          <td
+            aria-colindex="1"
+            class="bolt-tree-cell bolt-table-cell bolt-list-cell"
+            data-column-index="0"
+            role="gridcell"
+          >
+            <div
+              class="bolt-table-cell-content flex-row flex-center"
+            >
+              <span
+                class="fluent-icons-enabled"
+              >
+                <span
+                  aria-hidden="true"
+                  class="bolt-tree-expand-button font-size cursor-pointer invisible flex-noshrink fabric-icon ms-Icon--ChevronDownMed small"
+                  role="presentation"
+                  style="margin-left: 32px;"
+                />
+              </span>
+              <span
+                class="bolt-list-cell-child flex-row flex-center bolt-list-cell-text"
+              >
+                <span
+                  class="text-ellipsis body-m"
+                >
+                  Pipeline 2
+                </span>
+              </span>
+            </div>
+          </td>
+          <td
+            aria-colindex="2"
+            class="bolt-table-cell bolt-list-cell"
+            data-column-index="1"
+            role="gridcell"
+          >
+            <div
+              class="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m bolt-table-cell-content-with-inline-link bolt-table-cell-content flex-row flex-center"
+            >
+              <div
+                class="flex-row flex-start"
+              >
+                <svg
+                  aria-labelledby="__bolt-status-19-desc"
+                  class="bolt-status flex-noshrink failed icon-large-margin status-icon"
+                  height="16"
+                  role="img"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <desc
+                    id="__bolt-status-19-desc"
+                  >
+                    Failed
+                  </desc>
+                  <circle
+                    cx="8"
+                    cy="8"
+                    r="8"
+                  />
+                  <path
+                    d="M10.984 5.004a.9.9 0 0 1 0 1.272L9.27 7.99l1.74 1.741a.9.9 0 1 1-1.272 1.273l-1.74-1.741-1.742 1.74a.9.9 0 1 1-1.272-1.272l1.74-1.74-1.713-1.714a.9.9 0 0 1 1.273-1.273l1.713 1.713 1.714-1.713a.9.9 0 0 1 1.273 0z"
+                    fill="#fff"
+                  />
+                </svg>
+                <div
+                  class="flex-column wrap-text"
+                >
+                  <a
+                    class="bolt-table-inline-link bolt-table-link no-underline-link bolt-link"
+                    data-focuszone="focuszone-47"
+                    href="https://dev.azure.com/org/project/_build/results?buildId=2"
+                    rel="noopener"
+                    tabindex="0"
+                    target="_top"
+                  >
+                    Build 456
+                  </a>
+                  <div
+                    class="finish-date"
+                  >
+                    <span
+                      data-testid="safe-ago"
+                    >
+                      2025-06-29T10:00:00.000Z
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td
+            aria-colindex="3"
+            class="bolt-table-cell bolt-list-cell"
+            data-column-index="2"
+            role="gridcell"
+          >
+            <div
+              class="bolt-table-cell-content flex-row flex-center"
+            >
+              <div
+                class="no-data"
+              >
+                -
+              </div>
+            </div>
+          </td>
+          <td
+            class="bolt-table-cell-compact bolt-table-cell bolt-list-cell"
+            role="presentation"
+          />
+        </tr>
+        <tr
+          class="bolt-list-row-spacer invisible"
+          role="presentation"
+        >
+          <td
+            class="bolt-list-cell-spacer invisible"
+            colspan="5"
+            style="height: 0px;"
+          />
+        </tr>
+        <tr
+          class="bolt-list-row-spacer invisible"
+          role="presentation"
+        >
+          <td
+            class="bolt-list-cell-spacer invisible"
+            colspan="5"
+            style="height: 0px;"
+          />
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
