@@ -57,7 +57,7 @@
         "sass-loader": "^14.2.1",
         "style-loader": "^4.0.0",
         "tfx-cli": "^0.21.1",
-        "ts-jest": "^29.4.0",
+        "ts-jest": "^29.4.1",
         "ts-loader": "^9.5.2",
         "typescript": "^5.9.2",
         "vss-web-extension-sdk": "^5.141.0",
