@@ -104,7 +104,7 @@ export const DashboardContent = (props: DashboardContentProps) => {
                     ) : viewType === ViewType.List ? (
                         <ListViewDeploymentsTable environments={environments} pipelines={pipelines} projectName={projectInfo?.name} />
                     ) : (
-                        <TreeViewDeploymentsTable environments={environments} pipelines={pipelines} />
+                        <TreeViewDeploymentsTable environments={environments} pipelines={pipelines} projectName={projectInfo?.name} />
                     )}
                 </Card>
             </div>
