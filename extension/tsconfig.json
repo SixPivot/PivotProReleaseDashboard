@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "module": "amd",
-        "lib": ["es5", "es6", "dom", "es2015.promise"],
+        "lib": ["es5", "es6", "dom", "es2015.promise", "ES2017.Object"],
         "importHelpers": true,
         "sourceMap": true,
         "rootDir": "src/",

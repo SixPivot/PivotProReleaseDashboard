@@ -9,8 +9,8 @@ import { SimpleTableCell } from 'azure-devops-ui/Table'
 import { useState, useEffect } from 'react'
 import { ITreeItemProvider } from 'azure-devops-ui/Utilities/TreeItemProvider'
 import { DeploymentTableCell } from './DeploymentTableCell'
-import { getBuild, getBuildTimeline } from '../api/BuildClient'
-import { getPipelineApprovals } from '../api/PipelineApprovalsClient'
+import { useBuildAndApprovalData } from '../hooks/useBuildAndApprovalData'
+import { extractBuildAndApprovalNames } from '../utils/pipelineUtils'
 
 export const TreeViewDeploymentsTable = (props: {
     environments: IEnvironmentInstance[]
@@ -20,102 +20,12 @@ export const TreeViewDeploymentsTable = (props: {
     const { environments, pipelines, projectName } = props
     const [folderViewItemProvider, setFolderViewItemProvider] = useState<ITreeItemProvider<IDeploymentTableItem>>()
 
-    // State to hold build names and approval names for each environment instance
-    const [buildNames, setBuildNames] = useState<Record<string, string>>({})
-    const [approvalNames, setApprovalNames] = useState<Record<string, string>>({})
+    // Use the shared hook for fetching build and approval data
+    const { buildNames, approvalNames } = useBuildAndApprovalData(pipelines, projectName)
 
     useEffect(() => {
         if (pipelines && environments) buildTreeView()
     }, [pipelines, environments, buildNames, approvalNames])
-
-    useEffect(() => {
-        if (!projectName) return
-
-        const newBuildNames: Record<string, string> = {}
-        const newApprovalNames: Record<string, string> = {}
-
-        // Function to fetch build names and approval information
-        async function fetchBuildNames() {
-            const pending: Array<Promise<void>> = []
-            let totalKeys = 0
-            pipelines.forEach((pipeline) => {
-                Object.keys(pipeline.environments).forEach((envName: string) => {
-                    const deploymentInstance = pipeline.environments[envName]
-                    const key = pipeline.key + ':' + envName
-                    totalKeys++
-                    pending.push(
-                        (async () => {
-                            const build = await getBuild(projectName!, deploymentInstance.buildId!)
-                            newBuildNames[key] = build?.buildNumber || deploymentInstance.value
-
-                            if (!build) return
-
-                            const buildId = build.id
-
-                            const timeline = await getBuildTimeline(projectName!, deploymentInstance.buildId!)
-
-                            if (!timeline) {
-                                console.warn(`No timeline found for build ID: ${buildId}`)
-                                return
-                            }
-
-                            // See if there are any Checkpoint.Approval records in the timeline
-                            // whose parent's parent is type 'Stage' and has the same name as the stageName
-                            const approvalTimelineRecord = timeline.records.find((record) => record.type === 'Checkpoint.Approval')
-
-                            if (!approvalTimelineRecord) {
-                                console.warn(`No approval timeline record found for build ID: ${buildId}`)
-                                return
-                            }
-
-                            const checkpointRecord = timeline.records.find((record) => record.id === approvalTimelineRecord.parentId)
-                            if (!checkpointRecord) {
-                                console.warn(`No checkpoint record found for approval timeline record ID: ${approvalTimelineRecord.id}`)
-                                return
-                            }
-
-                            const stageRecord = timeline.records.find(
-                                (record) =>
-                                    record.id === checkpointRecord.parentId &&
-                                    record.type === 'Stage' &&
-                                    record.name === deploymentInstance.stageName
-                            )
-                            if (!stageRecord) {
-                                // This is expected if there is no approval required for this stage
-                                return
-                            }
-
-                            const approvals = await getPipelineApprovals(projectName!)
-
-                            if (!approvals || approvals.length === 0) {
-                                console.warn(`No approvals found for project: ${projectName}`)
-                                return
-                            }
-
-                            const approval = approvals.find((a) => a.id === approvalTimelineRecord.id)
-
-                            if (!approval) {
-                                console.warn(`No approval found for timeline record ID: ${approvalTimelineRecord.id}`)
-                                return
-                            }
-
-                            const approver = approval?.steps[0]?.actualApprover?.displayName
-
-                            if (approver) {
-                                newApprovalNames[key] = approver
-                            } else {
-                                console.warn(`No approver found for approval ID: ${approval.id}`)
-                            }
-                        })()
-                    )
-                })
-            })
-            await Promise.all(pending)
-            setBuildNames(newBuildNames)
-            setApprovalNames(newApprovalNames)
-        }
-        fetchBuildNames()
-    }, [pipelines, projectName])
 
     const buildTreeView = () => {
         let treeNodeItems: ITreeItem<IDeploymentTableItem>[] = []
@@ -214,24 +124,8 @@ export const TreeViewDeploymentsTable = (props: {
             )
         }
 
-        // Get build name and approval name for this pipeline/environment combination
-        let buildName: string | undefined = undefined
-        let approvalName: string | undefined = undefined
-        const env = pipeline.environments[treeColumn!.name!]
-        if (env) {
-            const key = pipeline.key + ':' + treeColumn!.name!
-            buildName = buildNames[key] || env.value
-            approvalName = approvalNames[key]
-
-            // Debug: log when we have enhanced data
-            if (buildNames[key] && buildNames[key] !== env.value) {
-                console.debug('TreeView using enhanced build name:', buildNames[key], 'for key:', key)
-            }
-
-            if (approvalNames[key]) {
-                console.debug('TreeView using approval name:', approvalNames[key], 'for key:', key)
-            }
-        }
+        // Extract build and approval names using shared utility
+        const { buildName, approvalName } = extractBuildAndApprovalNames(pipeline, treeColumn!.name!, buildNames, approvalNames)
 
         // Create a compatible table column for DeploymentTableCell
         const tableColumn: IDashboardEnvironmentColumn = {
