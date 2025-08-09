@@ -21,7 +21,7 @@ steps:
   - task: NodeTool@0
     displayName: "NodeTool"
     inputs:
-      versionSpec: "16.x"
+      versionSpec: "22.x"
 
   - task: Npm@1
     displayName: "Npm: Install"
