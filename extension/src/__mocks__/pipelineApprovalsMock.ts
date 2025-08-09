@@ -1,3 +1,1 @@
-module.exports = {
-    PipelineApprovalsRestClient: jest.fn(),
-}
+export const PipelineApprovalsRestClient = jest.fn()
